@@ -1,97 +1,65 @@
-import XCTest
+import Testing
 
-@testable import LasagnaMaster
-
-final class LasagnaMasterTests: XCTestCase {
-
-  func testRemainingMinutesExplicit() {
-    XCTAssertEqual(remainingMinutesInOven(elapsedMinutes: 22, expectedMinutesInOven: 100), 78)
-  }
-
-  func testRemainingMinutesDefault() throws {
+struct LasagnaMasterTests {
     
-    XCTAssertEqual(remainingMinutesInOven(elapsedMinutes: 22), 18)
-  }
-
-  func testPreparationTime() throws {
+    @Test func testRemainingMinutesExplicitTest() async throws {
+        #expect(remainingMinutesInOven(elapsedMinutes: 22, expectedMinutesInOven: 100) == 78)
+    }
     
-    XCTAssertEqual(
-      preparationTimeInMinutes(
-        layers: "sauce", "noodles", "béchamel", "meat", "mozzarella", "noodles", "ricotta",
-        "eggplant", "béchamel", "noodles", "sauce", "mozzarella"), 24)
-  }
-
-  func testPreparationTimeEmpty() throws {
+    @Test func testRemainingMinutesDefaultTest() async throws {
+        #expect(remainingMinutesInOven(elapsedMinutes: 22) == 18)
+    }
     
-    XCTAssertEqual(preparationTimeInMinutes(), 0)
-  }
-
-  func testQuantities() throws {
+    @Test func testPreparationTimeTest() async throws {
+        #expect(preparationTimeInMinutes(
+            layers: "sauce", "noodles", "béchamel", "meat", "mozzarella", "noodles", "ricotta",
+            "eggplant", "béchamel", "noodles", "sauce", "mozzarella") == 24)
+    }
     
-    let amount = quantities(
-      layers: "sauce", "noodles", "béchamel", "meat", "mozzarella", "noodles", "ricotta",
-      "eggplant", "béchamel", "noodles", "sauce", "mozzarella")
-    XCTAssertTrue(
-      amount.noodles == 9 && amount.sauce == 0.4, "expected (noodles: 9, sauce: 0.4, got \(amount)")
-  }
-
-  func testQuantitiesNoSauce() throws {
+    @Test func testPreparationTimeEmptyTest() async throws {
+        #expect(preparationTimeInMinutes() == 0)
+    }
     
-    let amount = quantities(
-      layers: "noodles", "béchamel", "noodles", "ricotta", "eggplant", "mozzarella")
-    XCTAssertTrue(
-      amount.noodles == 6 && amount.sauce == 0, "expected (noodles: 6, sauce: 0, got \(amount)")
-  }
-
-  func testQuantitiesNoNoodles() throws {
+    @Test func testQuantitiesTest() async throws {
+        let amount = quantities(
+            layers: "sauce", "noodles", "béchamel", "meat", "mozzarella", "noodles", "ricotta",
+            "eggplant", "béchamel", "noodles", "sauce", "mozzarella")
+        #expect(amount.noodles == 9 && amount.sauce == 0.4 == true)
+    }
     
-    let amount = quantities(
-      layers: "sauce", "meat", "mozzarella", "eggplant", "béchamel", "sauce", "mozzarella")
-    XCTAssertTrue(
-      amount.noodles == 0 && amount.sauce == 0.4, "expected (noodles: 0, sauce: 0.4, got \(amount)")
-  }
-
-  func testToOz() throws {
+    @Test func testQuantitiesNoSauceTest() async throws {
+        let amount = quantities(
+            layers: "noodles", "béchamel", "noodles", "ricotta", "eggplant", "mozzarella")
+        #expect(amount.noodles == 6 && amount.sauce == 0 == true)
+    }
     
-    var amount = quantities(
-      layers: "sauce", "noodles", "béchamel", "meat", "sauce", "noodles", "sauce", "mozzarella")
-    toOz(&amount)
-    XCTAssertEqual(amount.sauce, 20.2884, accuracy: 0.001)
-  }
-
-  func testRedWineRedInequalLayerCount() throws {
+    @Test func testQuantitiesNoNoodlesTest() async throws {
+        let amount = quantities(
+            layers: "sauce", "meat", "mozzarella", "eggplant", "béchamel", "sauce", "mozzarella")
+        #expect(amount.noodles == 0 && amount.sauce == 0.4 == true)
+    }
     
-    XCTAssertTrue(
-      redWine(layers: "sauce", "noodles", "sauce", "noodles", "meat", "noodles", "mozzarella"))
-  }
-  
-  func testRedWineRedEqualLayerCount() throws {
+    @Test func testToOzTest() async throws {
+        var amount = quantities(
+            layers: "sauce", "noodles", "béchamel", "meat", "sauce", "noodles", "sauce", "mozzarella")
+        toOz(&amount)
+        #expect(amount.sauce == 20.2884)
+    }
     
-    XCTAssertTrue(
-      redWine(
-        layers: "sauce", "noodles", "ricotta", "sauce", "noodles", "béchamel", "meat", "noodles", 
-        "mozzarella"))
-  }
-
-  func testRedWineWhite() throws {
+    @Test func testRedWineRedInequalLayerCountTest() async throws {
+        #expect(redWine(layers: "sauce", "noodles", "sauce", "noodles", "meat", "noodles", "mozzarella") == true)
+    }
     
-    XCTAssertFalse(
-      redWine(
-        layers: "sauce", "noodles", "béchamel", "meat", "mozzarella", "noodles", "sauce", "ricotta",
-        "eggplant", "mozzarella", "béchamel", "noodles", "meat", "sauce", "mozzarella"))
-  }
-
-  static var allTests = [
-    ("testRemainingMinutesExplicit", testRemainingMinutesExplicit),
-    ("testRemainingMinutesDefault", testRemainingMinutesDefault),
-    ("testPreparationTime", testPreparationTime),
-    ("testPreparationTimeEmpty", testPreparationTimeEmpty),
-    ("testQuantities", testQuantities),
-    ("testQuantitiesNoSauce", testQuantitiesNoSauce),
-    ("testQuantitiesNoNoodles", testQuantitiesNoNoodles),
-    ("testToOz", testToOz),
-    ("testRedWineRedInequalLayerCount", testRedWineRedInequalLayerCount),
-    ("testRedWineRedEqualLayerCount", testRedWineRedEqualLayerCount),
-    ("testRedWineWhite", testRedWineWhite),
-  ]
+    @Test func testRedWineRedEqualLayerCountTest() async throws {
+        #expect(redWine(
+            layers: "sauce", "noodles", "ricotta", "sauce", "noodles", "béchamel", "meat", "noodles",
+            "mozzarella") == true)
+    }
+    
+    @Test func testRedWineWhiteTest() async throws {
+        #expect(redWine(
+            layers: "sauce", "noodles", "béchamel", "meat", "mozzarella", "noodles", "sauce", "ricotta",
+            "eggplant", "mozzarella", "béchamel", "noodles", "meat", "sauce", "mozzarella") == false)
+    }
+    
 }
